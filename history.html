@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance History - Hostel Attendance</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        header h1 i {
+            color: #667eea;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .date-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .record-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .attendance-record {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .record-date {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .record-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .summary-item.present {
+            border-top: 4px solid #28a745;
+        }
+
+        .summary-item.absent {
+            border-top: 4px solid #dc3545;
+        }
+
+        .summary-item.total {
+            border-top: 4px solid #667eea;
+        }
+
+        .summary-item .number {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-item.present .number {
+            color: #28a745;
+        }
+
+        .summary-item.absent .number {
+            color: #dc3545;
+        }
+
+        .summary-item.total .number {
+            color: #667eea;
+        }
+
+        .summary-item .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .attendance-lists {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .attendance-column {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .column-header {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .column-header.present {
+            color: #28a745;
+        }
+
+        .column-header.absent {
+            color: #dc3545;
+        }
+
+        .column-header.unmarked {
+            color: #ffc107;
+        }
+
+        .student-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .student-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .student-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.present {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.absent {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.unmarked {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .record-summary {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .attendance-lists {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls, .date-selector, .record-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .record-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-history"></i> Attendance History</h1>
+            <p>View and manage historical attendance records</p>
+        </header>
+
+        <div class="controls">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/admin.html" class="btn btn-secondary">
+                <i class="fas fa-cogs"></i> Admin Panel
+            </a>
+        </div>
+
+        <div class="date-selector">
+            <div class="form-group">
+                <label for="date-select">Select Date:</label>
+                <select id="date-select">
+                    <option value="">Loading dates...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date-input">Or enter date:</label>
+                <input type="date" id="date-input">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-success" onclick="loadSelectedDate()">
+                    <i class="fas fa-search"></i> View Record
+                </button>
+            </div>
+        </div>
+
+        <div id="history-content">
+            <div class="loading">Loading attendance history...</div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = window.location.origin;
+
+        // Get initials for avatar
+        function getInitials(name) {
+            return name.charAt(0).toUpperCase();
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // Create student item HTML
+        function createStudentItem(studentName, status) {
+            const statusText = status === true ? 'Present' : 
+                              status === false ? 'Absent' : 'Not Marked';
+            const statusClass = status === true ? 'present' : 
+                               status === false ? 'absent' : 'unmarked';
+            
+            return `
+                <div class="student-item">
+                    <div class="student-avatar">${getInitials(studentName)}</div>
+                    <div class="student-name">${studentName.charAt(0).toUpperCase() + studentName.slice(1)}</div>
+                    <div class="status-badge ${statusClass}">${statusText}</div>
+                </div>
+            `;
+        }
+
+        // Display attendance record
+        function displayAttendanceRecord(record) {
+            const content = document.getElementById('history-content');
+            
+            if (!record) {
+                content.innerHTML = '<div class="no-records">No attendance record found for the selected date.</div>';
+                return;
+            }
+            
+            const presentStudents = [];
+            const absentStudents = [];
+            const unmarkedStudents = [];
+            
+            Object.entries(record.attendance).forEach(([studentName, status]) => {
+                if (status === true) {
+                    presentStudents.push(studentName);
+                } else if (status === false) {
+                    absentStudents.push(studentName);
+                } else {
+                    unmarkedStudents.push(studentName);
+                }
+            });
+            
+            content.innerHTML = `
+                <div class="attendance-record">
+                    <div class="record-header">
+                        <div class="record-date">${formatDate(record.date)}</div>
+                        <div>Recorded: ${new Date(record.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                    
+                    <div class="record-summary">
+                        <div class="summary-item present">
+                            <span class="number">${record.summary.present}</span>
+                            <span class="label">Present</span>
+                        </div>
+                        <div class="summary-item absent">
+                            <span class="number">${record.summary.absent}</span>
+                            <span class="label">Absent</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span class="number">${record.summary.total}</span>
+                            <span class="label">Total Students</span>
+                        </div>
+                    </div>
+                    
+                    <div class="attendance-lists">
+                        <div class="attendance-column">
+                            <div class="column-header present">
+                                <i class="fas fa-check-circle"></i>
+                                Present Students (${presentStudents.length})
+                            </div>
+                            <div class="student-list">
+                                ${presentStudents.length > 0 ? 
+                                    presentStudents.map(name => createStudentItem(name, true)).join('') :
+                                    '<div style="text-align: center; padding: 20px; color: #666;">No students present</div>'
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="attendance-column">
+                            <div class="column-header absent">
+                                <i class="fas fa-times-circle"></i>
+                                Absent Students (${absentStudents.length})
+                            </div>
+                            <div class="student-list">
+                                ${absentStudents.length > 0 ? 
+                                    absentStudents.map(name => createStudentItem(name, false)).join('') :
+                                    '<div style="text-align: center; padding: 20px; color: #666;">No students absent</div>'
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="attendance-column">
+                            <div class="column-header unmarked">
+                                <i class="fas fa-question-circle"></i>
+                                Not Marked (${unmarkedStudents.length})
+                            </div>
+                            <div class="student-list">
+                                ${unmarkedStudents.length > 0 ? 
+                                    unmarkedStudents.map(name => createStudentItem(name, null)).join('') :
+                                    '<div style="text-align: center; padding: 20px; color: #666;">All students marked</div>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load and display all available dates
+        async function loadAvailableDates() {
+            try {
+                const response = await fetch(`${API_BASE}/api/history`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const dates = Object.keys(result.data).sort((a, b) => new Date(b) - new Date(a));
+                    const selectElement = document.getElementById('date-select');
+                    
+                    if (dates.length === 0) {
+                        selectElement.innerHTML = '<option value="">No historical records available</option>';
+                        return;
+                    }
+                    
+                    selectElement.innerHTML = '<option value="">Select a date...</option>' + 
+                        dates.map(date => `<option value="${date}">${formatDate(date)}</option>`).join('');
+                } else {
+                    throw new Error(result.message || 'Failed to load dates');
+                }
+            } catch (error) {
+                console.error('Error loading dates:', error);
+                document.getElementById('date-select').innerHTML = '<option value="">Error loading dates</option>';
+            }
+        }
+
+        // Load attendance record for a specific date
+        async function loadAttendanceRecord(date) {
+            try {
+                const response = await fetch(`${API_BASE}/api/history/${date}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayAttendanceRecord(result.data);
+                } else {
+                    displayAttendanceRecord(null);
+                }
+            } catch (error) {
+                console.error('Error loading attendance record:', error);
+                document.getElementById('history-content').innerHTML = 
+                    '<div class="error">Failed to load attendance record. Please try again.</div>';
+            }
+        }
+
+        // Load selected date from UI
+        function loadSelectedDate() {
+            const dateSelect = document.getElementById('date-select').value;
+            const dateInput = document.getElementById('date-input').value;
+            
+            let selectedDate;
+            
+            if (dateSelect) {
+                selectedDate = dateSelect;
+            } else if (dateInput) {
+                // Convert YYYY-MM-DD to date string format
+                selectedDate = new Date(dateInput).toDateString();
+            } else {
+                alert('Please select or enter a date');
+                return;
+            }
+            
+            loadAttendanceRecord(selectedDate);
+        }
+
+        // Initialize the page
+        function initializePage() {
+            loadAvailableDates();
+            
+            // Set today's date in the date input
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('date-input').value = formattedDate;
+            
+            // Load today's record by default
+            loadAttendanceRecord(today.toDateString());
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

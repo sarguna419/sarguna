@@ -1,0 +1,36 @@
+{
+  "students": [
+    "appu",
+    "deva",
+    "gopi",
+    "kishore",
+    "Lokesh",
+    "praveen",
+    "prabu",
+    "sanjay",
+    "santosh",
+    "sarguna",
+    "satheesh",
+    "tharun",
+    "tharun.s",
+    "thirukumaran"
+  ],
+  "attendance": {
+    "appu": null,
+    "deva": null,
+    "gopi": null,
+    "kishore": null,
+    "Lokesh": null,
+    "praveen": null,
+    "prabu": null,
+    "sanjay": null,
+    "santosh": null,
+    "sarguna": null,
+    "satheesh": null,
+    "tharun": null,
+    "tharun.s": null,
+    "thirukumaran": null
+  },
+  "history": {},
+  "currentDate": "Thu Oct 02 2025"
+}

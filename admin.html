@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Hostel Attendance</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-header i {
+            color: #667eea;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .error {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 5px;
+        }
+
+        .success {
+            color: #28a745;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 5px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .admin-header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-header i {
+            color: #667eea;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .admin-details h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .admin-details p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .admin-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .section-header i {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .section-header h3 {
+            font-size: 1.3rem;
+        }
+
+        .student-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .student-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 5px;
+        }
+
+        .add-student-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .add-student-form input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .add-student-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .danger-zone {
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            padding: 20px;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .danger-zone h4 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .danger-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container, .login-container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .admin-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .danger-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div id="login-container" class="login-container">
+        <div class="login-header">
+            <i class="fas fa-shield-alt"></i>
+            <h1>Admin Login</h1>
+            <p>Hostel Attendance Management</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            
+            <div id="login-error" class="error hidden"></div>
+        </form>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="container hidden">
+        <div class="admin-header">
+            <h1><i class="fas fa-cogs"></i> Admin Panel</h1>
+            <div class="admin-info">
+                <div class="admin-avatar" id="admin-avatar">A</div>
+                <div class="admin-details">
+                    <h3 id="admin-name">Admin</h3>
+                    <p id="admin-email">admin@example.com</p>
+                </div>
+                <button class="btn btn-secondary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-sections">
+            <!-- Student Management -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <i class="fas fa-users"></i>
+                    <h3>Student Management</h3>
+                </div>
+                
+                <div class="add-student-form">
+                    <input type="text" id="new-student-name" placeholder="Enter student name" maxlength="50">
+                    <button class="btn btn-success btn-sm" onclick="addStudent()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="number" id="total-students">0</span>
+                        <span class="label">Total Students</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="number" id="active-students">0</span>
+                        <span class="label">Active Students</span>
+                    </div>
+                </div>
+                
+                <div class="student-list" id="student-list">
+                    <!-- Students will be loaded here -->
+                </div>
+            </div>
+
+            <!-- System Controls -->
+            <div class="admin-section">
+                <div class="section-header">
+                    <i class="fas fa-tools"></i>
+                    <h3>System Controls</h3>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="viewAttendance()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-eye"></i> View Current Attendance
+                    </button>
+                    <button class="btn btn-primary" onclick="viewHistory()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-history"></i> View Attendance History
+                    </button>
+                    <button class="btn btn-primary" onclick="viewDisplay()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-tv"></i> Open Display Screen
+                    </button>
+                </div>
+
+                <div class="bulk-operations" style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #333; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-users-cog"></i> Bulk Operations
+                    </h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="btn btn-success" onclick="markAllPresent()">
+                            <i class="fas fa-check-double"></i> Mark All Present
+                        </button>
+                        <button class="btn btn-danger" onclick="markAllAbsent()">
+                            <i class="fas fa-times"></i> Mark All Absent
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="danger-zone">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Danger Zone</h4>
+                    <div class="danger-actions">
+                        <button class="btn btn-secondary" onclick="resetTodayAttendance()">
+                            <i class="fas fa-undo"></i> Reset Today's Attendance
+                        </button>
+                        <button class="btn btn-danger" onclick="clearAllData()">
+                            <i class="fas fa-trash"></i> Clear All Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-message" class="hidden"></div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = window.location.origin;
+        let authToken = localStorage.getItem('adminToken');
+
+        // Check if already logged in
+        if (authToken) {
+            verifyToken();
+        }
+
+        // Login form handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    authToken = result.token;
+                    localStorage.setItem('adminToken', authToken);
+                    showAdminPanel(result.admin);
+                } else {
+                    showError('login-error', result.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('login-error', 'Connection error. Please try again.');
+            }
+        });
+
+        // Verify token
+        async function verifyToken() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/verify`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAdminPanel(result.admin);
+                } else {
+                    localStorage.removeItem('adminToken');
+                    authToken = null;
+                }
+            } catch (error) {
+                console.error('Token verification error:', error);
+                localStorage.removeItem('adminToken');
+                authToken = null;
+            }
+        }
+
+        // Show admin panel
+        function showAdminPanel(admin) {
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            
+            // Set admin info
+            document.getElementById('admin-name').textContent = admin.name;
+            document.getElementById('admin-email').textContent = admin.email;
+            document.getElementById('admin-avatar').textContent = admin.name.charAt(0).toUpperCase();
+            
+            // Load students
+            loadStudents();
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('adminToken');
+            authToken = null;
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            hideMessage('login-error');
+        }
+
+        // Load students
+        async function loadStudents() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/students`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayStudents(result.data);
+                    updateStudentStats(result.data);
+                } else {
+                    showMessage('Failed to load students', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading students:', error);
+                showMessage('Error loading students', 'error');
+            }
+        }
+
+        // Display students
+        function displayStudents(students) {
+            const container = document.getElementById('student-list');
+            
+            if (students.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No students found</p>';
+                return;
+            }
+            
+            container.innerHTML = students.map(student => `
+                <div class="student-item">
+                    <div class="student-info">
+                        <div class="student-avatar">${student.name.charAt(0).toUpperCase()}</div>
+                        <div class="student-name">${student.displayName}</div>
+                    </div>
+                    <div class="student-actions">
+                        ${student.isActive ? 
+                            `<button class="btn btn-danger btn-sm" onclick="toggleStudent('${student._id}', false)">
+                                <i class="fas fa-ban"></i> Deactivate
+                            </button>` :
+                            `<button class="btn btn-success btn-sm" onclick="toggleStudent('${student._id}', true)">
+                                <i class="fas fa-check"></i> Activate
+                            </button>`
+                        }
+                        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${student._id}', '${student.name}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update student stats
+        function updateStudentStats(students) {
+            const total = students.length;
+            const active = students.filter(s => s.isActive).length;
+            
+            document.getElementById('total-students').textContent = total;
+            document.getElementById('active-students').textContent = active;
+        }
+
+        // Add student
+        async function addStudent() {
+            const name = document.getElementById('new-student-name').value.trim();
+            
+            if (!name) {
+                showMessage('Please enter a student name', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/students`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('new-student-name').value = '';
+                    showMessage('Student added successfully', 'success');
+                    loadStudents();
+                } else {
+                    showMessage(result.message || 'Failed to add student', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding student:', error);
+                showMessage('Error adding student', 'error');
+            }
+        }
+
+        // Toggle student active status
+        async function toggleStudent(studentId, isActive) {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/students/${studentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ isActive })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`Student ${isActive ? 'activated' : 'deactivated'} successfully`, 'success');
+                    loadStudents();
+                } else {
+                    showMessage(result.message || 'Failed to update student', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating student:', error);
+                showMessage('Error updating student', 'error');
+            }
+        }
+
+        // Delete student
+        async function deleteStudent(studentId, studentName) {
+            if (!confirm(`Are you sure you want to delete "${studentName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/students/${studentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Student deleted successfully', 'success');
+                    loadStudents();
+                } else {
+                    showMessage(result.message || 'Failed to delete student', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                showMessage('Error deleting student', 'error');
+            }
+        }
+
+        // Reset today's attendance
+        async function resetTodayAttendance() {
+            if (!confirm('Are you sure you want to reset today\'s attendance? This will mark all students as unmarked.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/reset`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('Today\'s attendance has been reset successfully', 'success');
+                } else {
+                    showMessage(result.message || 'Failed to reset attendance', 'error');
+                }
+            } catch (error) {
+                console.error('Error resetting attendance:', error);
+                showMessage('Error resetting attendance', 'error');
+            }
+        }
+
+        // Clear all data
+        async function clearAllData() {
+            if (!confirm('⚠️ WARNING: This will delete ALL attendance data permanently. This action cannot be undone. Are you absolutely sure?')) {
+                return;
+            }
+            
+            const confirmation = prompt('Type "DELETE ALL DATA" to confirm:');
+            if (confirmation !== 'DELETE ALL DATA') {
+                showMessage('Operation cancelled', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/clear-all`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('All data has been cleared successfully', 'success');
+                } else {
+                    showMessage(result.message || 'Failed to clear data', 'error');
+                }
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                showMessage('Error clearing data', 'error');
+            }
+        }
+
+        // Mark all students present
+        async function markAllPresent() {
+            if (!confirm('Are you sure you want to mark ALL active students as present?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/bulk-attendance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ action: 'present' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`Successfully marked ${result.data.updated} students as present`, 'success');
+                } else {
+                    showMessage(result.message || 'Failed to mark all present', 'error');
+                }
+            } catch (error) {
+                console.error('Error marking all present:', error);
+                showMessage('Error marking all students present', 'error');
+            }
+        }
+
+        // Mark all students absent
+        async function markAllAbsent() {
+            if (!confirm('Are you sure you want to mark ALL active students as absent?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/bulk-attendance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ action: 'absent' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`Successfully marked ${result.data.updated} students as absent`, 'success');
+                } else {
+                    showMessage(result.message || 'Failed to mark all absent', 'error');
+                }
+            } catch (error) {
+                console.error('Error marking all absent:', error);
+                showMessage('Error marking all students absent', 'error');
+            }
+        }
+
+        // View attendance
+        function viewAttendance() {
+            window.open('/', '_blank');
+        }
+
+        // View history
+        function viewHistory() {
+            window.open('/history.html', '_blank');
+        }
+
+        // View display
+        function viewDisplay() {
+            window.open('/display.html', '_blank');
+        }
+
+        // Utility functions
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.remove('hidden');
+        }
+
+        function hideMessage(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.add('hidden');
+        }
+
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('admin-message');
+            messageEl.textContent = message;
+            messageEl.className = type === 'success' ? 'success' : 'error';
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Enter key handler for add student
+        document.getElementById('new-student-name').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addStudent();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
