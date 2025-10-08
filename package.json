@@ -2,7 +2,7 @@
   "name": "hostel-attendance-backend",
   "version": "1.0.0",
   "description": "Backend API for Hostel Attendance Management System",
-  "main": "server.js",
+  "main": "server-mongodb.js",
   "scripts": {
     "start": "node server-mongodb.js",
     "dev": "nodemon server-mongodb.js",

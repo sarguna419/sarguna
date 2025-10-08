@@ -15,19 +15,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection string
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/a';
 
 // JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'hostel_attendance_admin_secret_key_2025';
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'hostel_attendance_session_secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 app.use(express.static('.')); // Serve static files from current directory
 
