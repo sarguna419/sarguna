@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Admin Panel Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: red; margin-top: 10px; }
+        .success { color: green; margin-top: 10px; }
+        .hidden { display: none; }
+        .admin-panel { margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Admin Panel Test</h1>
+        
+        <!-- Login Form -->
+        <div id="login-form-container">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="sarguna@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" value="sarguna" required>
+                </div>
+                <button type="submit">Login</button>
+                <div id="login-message" class="error hidden"></div>
+            </form>
+        </div>
+        
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="admin-panel hidden">
+            <h2>Admin Panel</h2>
+            <p>Welcome, <span id="admin-name">Admin</span>!</p>
+            <button onclick="logout()">Logout</button>
+            <div id="admin-message" class="error hidden"></div>
+            
+            <h3>Students</h3>
+            <div id="students-list">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('adminToken');
+        
+        // Check if already logged in
+        if (authToken) {
+            verifyToken();
+        }
+        
+        // Login form handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    authToken = result.token;
+                    localStorage.setItem('adminToken', authToken);
+                    showAdminPanel(result.admin);
+                    showMessage('login-message', 'Login successful!', 'success');
+                } else {
+                    showMessage('login-message', result.message || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('login-message', 'Connection error. Please try again.', 'error');
+            }
+        });
+        
+        // Verify token
+        async function verifyToken() {
+            try {
+                const response = await fetch('/api/admin/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAdminPanel(result.admin);
+                } else {
+                    localStorage.removeItem('adminToken');
+                    authToken = null;
+                }
+            } catch (error) {
+                console.error('Token verification error:', error);
+                localStorage.removeItem('adminToken');
+                authToken = null;
+            }
+        }
+        
+        // Show admin panel
+        function showAdminPanel(admin) {
+            document.getElementById('login-form-container').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('admin-name').textContent = admin.name;
+            loadStudents();
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('adminToken');
+            authToken = null;
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('login-form-container').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        }
+        
+        // Load students
+        async function loadStudents() {
+            try {
+                const response = await fetch('/api/admin/students', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const studentsList = document.getElementById('students-list');
+                    studentsList.innerHTML = result.data.map(student => 
+                        `<div>${student.displayName} (${student.isActive ? 'Active' : 'Inactive'})</div>`
+                    ).join('');
+                } else {
+                    showMessage('admin-message', 'Failed to load students', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading students:', error);
+                showMessage('admin-message', 'Error loading students', 'error');
+            }
+        }
+        
+        // Show message
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = type;
+            element.classList.remove('hidden');
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    element.classList.add('hidden');
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

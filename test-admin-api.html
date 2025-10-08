@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 15px; margin: 5px; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Admin API Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Test Admin Login</h2>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="login-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test Token Verification</h2>
+        <button onclick="testVerify()">Test Verify Token</button>
+        <div id="verify-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Test Get Students</h2>
+        <button onclick="testGetStudents()">Test Get Students</button>
+        <div id="students-result"></div>
+    </div>
+
+    <script>
+        let authToken = null;
+
+        async function testLogin() {
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'sarguna@gmail.com',
+                        password: 'sarguna'
+                    })
+                });
+                
+                const result = await response.json();
+                const resultDiv = document.getElementById('login-result');
+                
+                if (result.success) {
+                    authToken = result.token;
+                    resultDiv.innerHTML = `<div class="success">✅ Login successful!</div><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Login failed</div><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                document.getElementById('login-result').innerHTML = 
+                    `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testVerify() {
+            if (!authToken) {
+                document.getElementById('verify-result').innerHTML = 
+                    '<div class="error">❌ Please login first</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                const resultDiv = document.getElementById('verify-result');
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ Token verified!</div><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Token verification failed</div><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                document.getElementById('verify-result').innerHTML = 
+                    `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testGetStudents() {
+            if (!authToken) {
+                document.getElementById('students-result').innerHTML = 
+                    '<div class="error">❌ Please login first</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/students', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                const resultDiv = document.getElementById('students-result');
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ Students loaded!</div><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Failed to load students</div><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                document.getElementById('students-result').innerHTML = 
+                    `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
